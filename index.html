@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smash Burger</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Smash Burger</h1>
+        <nav>
+            <ul>
+                <li><a href="#blog">Blog</a></li>
+                <li><a href="#order">Order Online</a></li>
+                <li><a href="#reservations">Reservations</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="blog">
+        <h2>Latest From Our Blog</h2>
+        <!-- Blog entries will be dynamically loaded here -->
+    </section>
+
+    <section id="order">
+        <h2>Order Online</h2>
+        <form action="/submit-order" method="POST">
+            <label for="burger">Choose your burger:</label>
+            <select id="burger" name="burger">
+                <option value="classic">Classic Smash</option>
+                <option value="cheese">Cheese Smash</option>
+                <option value="bacon">Bacon Smash</option>
+            </select>
+            <button type="submit">Order Now</button>
+        </form>
+    </section>
+
+    <section id="reservations">
+        <h2>Book a Table</h2>
+        <form action="/submit-reservation" method="POST">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <input type="datetime-local" id="datetime" name="datetime" required>
+            <button type="submit">Reserve</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>Copyright © Smash Burger 2024</p>
+    </footer>
+</body>
+</html>
