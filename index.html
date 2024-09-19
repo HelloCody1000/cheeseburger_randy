@@ -24,17 +24,42 @@
     </section>
 
     <section id="order">
-        <h2>Order Online</h2>
-        <form action="/submit-order" method="POST">
-            <label for="burger">Choose your burger:</label>
-            <select id="burger" name="burger">
-                <option value="classic">Classic Smash</option>
-                <option value="cheese">Cheese Smash</option>
-                <option value="bacon">Bacon Smash</option>
-            </select>
-            <button type="submit">Order Now</button>
-        </form>
-    </section>
+    <h2>Order Online</h2>
+    <div id="categories">
+        <button onclick="showCategory('appetizers')">Appetizers</button>
+        <button onclick="showCategory('burgers')">Burgers</button>
+        <button onclick="showCategory('sides')">Sides</button>
+        <button onclick="showCategory('shakes')">Shakes</button>
+    </div>
+
+    <div id="appetizers" class="category" style="display:none;">
+        <h3>Appetizers</h3>
+        <select id="appetizer-select">
+            <option value="wings">Buffalo Wings</option>
+            <option value="nachos">Nachos</option>
+        </select>
+        <label>Quantity: <input type="number" id="appetizer-qty" value="1"></label>
+        <button onclick="addToCart('appetizers')">Add to Cart</button>
+    </div>
+
+    <div id="burgers" class="category" style="display:none;">
+        <h3>Burgers</h3>
+        <select id="burger-select">
+            <option value="classic">Classic Smash</option>
+            <option value="cheese">Cheese Smash</option>
+            <option value="bacon">Bacon Smash</option>
+        </select>
+        <label>Quantity: <input type="number" id="burger-qty" value="1"></label>
+        <button onclick="addToCart('burgers')">Add to Cart</button>
+    </div>
+
+    <!-- Repeat similar structure for 'sides' and 'shakes' -->
+
+    <h3>Your Cart</h3>
+    <ul id="cart"></ul>
+    <button onclick="submitOrder()">Submit Order</button>
+</section>
+
 
     <section id="reservations">
         <h2>Book a Table</h2>
