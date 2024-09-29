@@ -4,104 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smash Burger</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
 </head>
 <body>
+    <!-- Header Section -->
     <header>
         <h1>Smash Burger</h1>
         <nav>
             <ul>
-                <li><a href="#blog">Blog</a></li>
-                <li><a href="#order">Order Online</a></li>
-                <li><a href="#reservations">Reservations</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="order.html">Order Online</a></li>
+                <li><a href="reservations.html">Reservations</a></li>
             </ul>
         </nav>
     </header>
 
-    <section id="blog">
-        <h2>Latest From Our Blog</h2>
-        <!-- Blog entries will be dynamically loaded here -->
+    <!-- Home Content Section -->
+    <section>
+        <h2>Welcome to Smash Burger</h2>
+        <p>Check out our blog, order online, or reserve a table for your next visit!</p>
     </section>
 
-    <section id="order">
-        <h2>Order Online</h2>
-        <div id="categories">
-            <button onclick="showCategory('appetizers')">Appetizers</button>
-            <button onclick="showCategory('burgers')">Burgers</button>
-            <button onclick="showCategory('sides')">Sides</button>
-            <button onclick="showCategory('shakes')">Shakes</button>
-        </div>
-
-        <div id="appetizers" class="category" style="display:none;">
-            <h3>Appetizers</h3>
-            <select id="appetizer-select">
-                <option value="wings">Buffalo Wings</option>
-                <option value="nachos">Nachos</option>
-                <option value="cheeseFries">Cheese fries</option>
-                <option value="gatorBites">Gator bites</option>
-                <option value="friedPickles">Fried pickles</option>
-                <option value="RandyTrio">Randy-trio</option>
-            </select>
-            <label>Quantity: <input type="number" id="appetizer-qty" value="1"></label>
-            <button onclick="addToCart('appetizers')">Add to Cart</button>
-        </div>
-
-        <div id="burgers" class="category" style="display:none;">
-            <h3>Burgers</h3>
-            <select id="burger-select">
-                <option value="classic">Classic Randy Smash</option>
-                <option value="cheese">Cheese Randy Smash</option>
-                <option value="baconCheese">Bacon and Cheese Randy Smash</option>
-            </select>
-            <label>Quantity: <input type="number" id="burger-qty" value="1"></label>
-            <button onclick="addToCart('burgers')">Add to Cart</button>
-        </div>
-        
-        <div id="sides" class="category" style="display:none;">
-            <h3>Sides</h3>
-            <select id="sides-select">
-                <option value="salads">House or Cesar Salad</option>
-                <option value="Tots">Tator Tots</option>
-                <option value="Fries">Fries</option>
-                <option value="butterCorn">Butter Corn</option>
-                <option value="grilledVeggies">Grilled Veggies</option>
-            </select>
-            <label>Quantity: <input type="number" id="sides-qty" value="1"></label>
-            <button onclick="addToCart('sides')">Add to Cart</button>
-        </div>
-            
-        <div id="shakes" class="category" style="display:none;">
-            <h3>Shakes</h3>
-            <select id="shakes-select">
-                <option value="strawberry">Strawberry</option>
-                <option value="peach">Peach</option>
-                <option value="lemon">Lemon</option>
-                <option value="blueberry">Blueberry</option>
-            </select>
-
-            <label>Quantity: <input type="number" id="shakes-qty" value="1"></label>
-            <button onclick="addToCart('shakes')">Add to Cart</button>
-        </div>
-
-        <h3>Your Cart</h3>
-        <ul id="cart"></ul>
-        <button onclick="submitOrder()">Submit Order</button>
-    </section>
-
-    <section id="reservations">
-        <h2>Book a Table</h2>
-        <form action="/submit-reservation" method="POST">
-            <input type="text" id="name" name="name" placeholder="Your Name" required>
-            <input type="email" id="email" name="email" placeholder="Your Email" required>
-            <input type="datetime-local" id="datetime" name="datetime" required>
-            <button type="submit">Reserve</button>
-        </form>
-    </section>
-
+    <!-- Footer Section -->
     <footer>
         <p>Copyright © Smash Burger 2024</p>
     </footer>
-
-    <script src="orderDropDown.js"></script>
 </body>
 </html>
