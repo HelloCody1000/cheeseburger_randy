@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations - Smash Burger</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Reservations</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="order.html">Order Online</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section>
+        <h2>Book a Table</h2>
+        <form action="/submit-reservation" method="POST">
+            <input type="text" id="name" name="name" placeholder="Your Name" required>
+            <input type="email" id="email" name="email" placeholder="Your Email" required>
+            <input type="datetime-local" id="datetime" name="datetime" required>
+            <button type="submit">Reserve</button>
+        </form>
+    </section>
+
+    <nav>
+        <ul>
+            <li><a href="blog.html">Blog</a></li>
+            <li><a href="order.html">Order Online</a></li>
+            <li><a href="reservations.html">Reservations</a></li>
+        </ul>
+    </nav>
+    
+
+    <footer>
+        <p>Copyright © Smash Burger 2024</p>
+    </footer>
+</body>
+</html>
