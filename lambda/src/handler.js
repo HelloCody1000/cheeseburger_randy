@@ -1,5 +1,5 @@
-const { createReservation } = require('./reservation');
-const { validateRequestBody, validateReservationTime } = require('../validation');
+const { createReservation } = require('./src/reservation.js');
+const { validateRequestBody, validateReservationTime } = require('./src/validation.js');
 
 exports.handler = async (event) => {
     // Validate request body
