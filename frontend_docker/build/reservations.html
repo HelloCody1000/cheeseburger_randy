@@ -1,126 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservations - Smash Burger</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to external CSS file -->
-</head>
-<body>
-    <!-- Header Section -->
-    <header>
-        <h1>Reservations</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Home</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="order.html">Order Online</a></li>
-            </ul>
-        </nav>
-    </header>
+<script>
+    // Set today's date as the default for the date input
+    const dateInput = document.getElementById("date");
+    const today = new Date().toISOString().split("T")[0];
+    dateInput.setAttribute("min", today); // Disallow past dates
+    dateInput.value = today;
 
-    <!-- Reservation Section -->
-    <section id="reservations">
-        <h2>Book a Table</h2>
-        <form id="reservationForm">
-            <label for="name">Your Name</label>
-            <input type="text" id="name" name="name" placeholder="Your Name" required>
+    // Populate hours and minutes dropdowns
+    const hourSelect = document.getElementById("hour");
+    const minuteSelect = document.getElementById("minute");
 
-            <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
-            <small>Format: 123-456-7890</small>
+    // Hours from 11 AM to 9 PM (12-hour format)
+    const hours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    hours.forEach(hour => {
+        const option = document.createElement("option");
+        option.value = hour;
+        option.textContent = hour;
+        hourSelect.appendChild(option);
+    });
 
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" placeholder="Your Email" required>
+    // Minutes in 15-minute increments
+    const minutes = ["00", "15", "30", "45"];
+    minutes.forEach(min => {
+        const option = document.createElement("option");
+        option.value = min;
+        option.textContent = min;
+        minuteSelect.appendChild(option);
+    });
 
-            <!-- Date Picker Input -->
-            <label for="date">Reservation Date</label>
-            <input type="date" id="date" name="date" required>
+    document.getElementById('reservationForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the default form submission
 
-            <label for="time">Reservation Time</label>
-            <div id="timeSelectors">
-                <select id="hour" name="hour" required></select> : 
-                <select id="minute" name="minute" required></select> 
-                <select id="period" name="period" required>
-                    <option value="AM">AM</option>
-                    <option value="PM">PM</option>
-                </select>
-            </div>
-            <small>Restaurant hours: 11:00 AM - 9:00 PM</small>
+        // Get date in YYYYMMDD format
+        const reservationDate = document.getElementById("date").value.replace(/-/g, '');
 
-            <button type="submit">Reserve</button>
-        </form>
+        // Get the hour, minute, and period (AM/PM)
+        let hour = parseInt(hourSelect.value);
+        const minute = minuteSelect.value;
+        const period = document.getElementById("period").value;
 
-        <p id="responseMessage"></p>
-    </section>
+        // Convert to military time format if PM
+        if (period === "PM" && hour !== 12) {
+            hour += 12;
+        } else if (period === "AM" && hour === 12) {
+            hour = 0;
+        }
+        // Format hour to always be two digits
+        const militaryHour = hour.toString().padStart(2, '0');
 
-    <!-- Footer Section -->
-    <footer>
-        <p>Copyright © Smash Burger 2024</p>
-    </footer>
+        // Combine date and military time to form the reservation ID prefix
+        const reservationDateTime = `${reservationDate}${militaryHour}${minute}`; // Example: 202410311300 for 1:00 PM
 
-    <!-- JavaScript to handle form submission and populate time options -->
-    <script>
-        // Set today's date as the default for the date input
-        const dateInput = document.getElementById("date");
-        const today = new Date().toISOString().split("T")[0];
-        dateInput.setAttribute("min", today); // Disallow past dates
-        dateInput.value = today;
+        const reservationData = {
+            name: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            email: document.getElementById('email').value,
+            time: reservationDateTime // Pass the combined date and time as a single value
+        };
 
-        // Populate hours and minutes dropdowns
-        const hourSelect = document.getElementById("hour");
-        const minuteSelect = document.getElementById("minute");
-
-        // Hours from 11 AM to 9 PM (12-hour format)
-        const hours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        hours.forEach(hour => {
-            const option = document.createElement("option");
-            option.value = hour;
-            option.textContent = hour;
-            hourSelect.appendChild(option);
+        // Sending the data to the REST API (replace the URL below with your API Gateway URL)
+        fetch('https://5n81fcqxt6.execute-api.us-east-1.amazonaws.com/dev/reservations', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reservationData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('responseMessage').innerText = "Reservation successful!";
+        })
+        .catch(error => {
+            document.getElementById('responseMessage').innerText = "Error making reservation. Please try again.";
+            console.error('Error:', error);
         });
-
-        // Minutes in 15-minute increments
-        const minutes = ["00", "15", "30", "45"];
-        minutes.forEach(min => {
-            const option = document.createElement("option");
-            option.value = min;
-            option.textContent = min;
-            minuteSelect.appendChild(option);
-        });
-
-        document.getElementById('reservationForm').addEventListener('submit', function(event) {
-            event.preventDefault();  // Prevent the default form submission
-
-            // Combine selected values into a formatted date and time string
-            const reservationDate = document.getElementById("date").value;
-            const reservationTime = `${hourSelect.value}:${minuteSelect.value} ${document.getElementById("period").value}`;
-
-            const reservationData = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                email: document.getElementById('email').value,
-                date: reservationDate,
-                time: reservationTime
-            };
-
-            // Sending the data to the REST API (replace the URL below with your API Gateway URL)
-            fetch('https://5n81fcqxt6.execute-api.us-east-1.amazonaws.com/dev/reservations', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(reservationData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('responseMessage').innerText = "Reservation successful!";
-            })
-            .catch(error => {
-                document.getElementById('responseMessage').innerText = "Error making reservation. Please try again.";
-                console.error('Error:', error);
-            });
-        });
-    </script>
-</body>
-</html>
+    });
+</script>
