@@ -34,9 +34,14 @@
             <input type="email" id="email" name="email" placeholder="Your Email" required>
 
             <label for="time">Reservation Time</label>
-            <select id="time" name="time" required>
-                <!-- Options will be generated dynamically -->
-            </select>
+            <div id="timeSelectors">
+                <select id="hour" name="hour" required></select> : 
+                <select id="minute" name="minute" required></select> 
+                <select id="period" name="period" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
             <small>Restaurant hours: 11:00 AM - 9:00 PM</small>
 
             <button type="submit">Reserve</button>
@@ -52,31 +57,39 @@
 
     <!-- JavaScript to handle form submission and populate time options -->
     <script>
-        // Populate time dropdown with options in 15-minute intervals from 11:00 AM to 9:00 PM
-        const timeSelect = document.getElementById("time");
-        const hours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // 11 AM to 9 PM
-        const minutes = ["00", "15", "30", "45"];
-        const periods = ["AM", "PM"];
+        // Populate hours and minutes dropdowns
+        const hourSelect = document.getElementById("hour");
+        const minuteSelect = document.getElementById("minute");
 
-        hours.forEach((hour, index) => {
-            const period = index < 1 ? "AM" : "PM"; // First hour is AM, the rest are PM
-            minutes.forEach(min => {
-                const timeOption = `${hour}:${min} ${period}`;
-                const option = document.createElement("option");
-                option.value = timeOption;
-                option.textContent = timeOption;
-                timeSelect.appendChild(option);
-            });
+        // Hours from 11 AM to 9 PM (12-hour format)
+        const hours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+        hours.forEach(hour => {
+            const option = document.createElement("option");
+            option.value = hour;
+            option.textContent = hour;
+            hourSelect.appendChild(option);
+        });
+
+        // Minutes in 15-minute increments
+        const minutes = ["00", "15", "30", "45"];
+        minutes.forEach(min => {
+            const option = document.createElement("option");
+            option.value = min;
+            option.textContent = min;
+            minuteSelect.appendChild(option);
         });
 
         document.getElementById('reservationForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent the default form submission
 
+            // Combine selected values into a formatted time string
+            const reservationTime = `${hourSelect.value}:${minuteSelect.value} ${document.getElementById("period").value}`;
+
             const reservationData = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value,
-                time: document.getElementById('time').value
+                time: reservationTime  // Pass the combined time as a single value
             };
 
             // Sending the data to the REST API (replace the URL below with your API Gateway URL)
