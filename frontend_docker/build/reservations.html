@@ -34,7 +34,9 @@
             <input type="email" id="email" name="email" placeholder="Your Email" required>
 
             <label for="time">Reservation Time</label>
-            <input type="time" id="time" name="time" required min="11:00" max="21:00">
+            <select id="time" name="time" required>
+                <!-- Options will be generated dynamically -->
+            </select>
             <small>Restaurant hours: 11:00 AM - 9:00 PM</small>
 
             <button type="submit">Reserve</button>
@@ -48,8 +50,25 @@
         <p>Copyright © Smash Burger 2024</p>
     </footer>
 
-    <!-- JavaScript to handle form submission -->
+    <!-- JavaScript to handle form submission and populate time options -->
     <script>
+        // Populate time dropdown with options in 15-minute intervals from 11:00 AM to 9:00 PM
+        const timeSelect = document.getElementById("time");
+        const hours = [11, 12, 1, 2, 3, 4, 5, 6, 7, 8, 9]; // 11 AM to 9 PM
+        const minutes = ["00", "15", "30", "45"];
+        const periods = ["AM", "PM"];
+
+        hours.forEach((hour, index) => {
+            const period = index < 1 ? "AM" : "PM"; // First hour is AM, the rest are PM
+            minutes.forEach(min => {
+                const timeOption = `${hour}:${min} ${period}`;
+                const option = document.createElement("option");
+                option.value = timeOption;
+                option.textContent = timeOption;
+                timeSelect.appendChild(option);
+            });
+        });
+
         document.getElementById('reservationForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent the default form submission
 
