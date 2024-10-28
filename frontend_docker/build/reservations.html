@@ -27,7 +27,7 @@
             <input type="text" id="name" name="name" placeholder="Your Name" required>
 
             <label for="phone">Phone Number</label>
-            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" pattern="[0-9]{3}-[0-9]{3}-[0-9]{4}" required>
+            <input type="tel" id="phone" name="phone" placeholder="Your Phone Number" maxlength="12" required>
             <small>Format: 123-456-7890</small>
 
             <label for="email">Email</label>
@@ -88,6 +88,21 @@
             minuteSelect.appendChild(option);
         });
 
+        // Format phone input with hyphens
+        document.getElementById("phone").addEventListener("input", function (event) {
+            const input = event.target;
+            let formatted = input.value.replace(/\D/g, ''); // Remove non-digit characters
+
+            // Apply formatting based on the length of the digits
+            if (formatted.length > 3 && formatted.length <= 6) {
+                formatted = `${formatted.slice(0, 3)}-${formatted.slice(3)}`;
+            } else if (formatted.length > 6) {
+                formatted = `${formatted.slice(0, 3)}-${formatted.slice(3, 6)}-${formatted.slice(6, 10)}`;
+            }
+
+            input.value = formatted;
+        });
+
         document.getElementById('reservationForm').addEventListener('submit', function(event) {
             event.preventDefault();  // Prevent the default form submission
 
@@ -95,8 +110,8 @@
             const reservationDate = document.getElementById("date").value.replace(/-/g, '');
 
             // Get the hour, minute, and period (AM/PM)
-            let hour = parseInt(document.getElementById("hour").value);
-            const minute = document.getElementById("minute").value;
+            let hour = parseInt(hourSelect.value);
+            const minute = minuteSelect.value;
             const period = document.getElementById("period").value;
 
             // Convert to military time format if PM
@@ -105,16 +120,17 @@
             } else if (period === "AM" && hour === 12) {
                 hour = 0;
             }
+            // Format hour to always be two digits
             const militaryHour = hour.toString().padStart(2, '0');
 
             // Combine date and military time to form the reservation ID prefix
-            const reservationDateTime = `${reservationDate}${militaryHour}${minute}`;
+            const reservationDateTime = `${reservationDate}${militaryHour}${minute}`; // Example: 202410311300 for 1:00 PM
 
             const reservationData = {
                 name: document.getElementById('name').value,
                 phone: document.getElementById('phone').value,
                 email: document.getElementById('email').value,
-                time: reservationDateTime
+                time: reservationDateTime // Pass the combined date and time as a single value
             };
 
             // Sending the data to the REST API (replace the URL below with your API Gateway URL)
@@ -125,22 +141,16 @@
                 },
                 body: JSON.stringify(reservationData)
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('responseMessage').innerText = data.error;
                 } else {
-                    // If response is not 200 (OK), assume it's an error and parse the error message
-                    return response.json().then(data => {
-                        throw new Error(data.error || "Unknown error occurred");
-                    });
+                    document.getElementById('responseMessage').innerText = "Reservation successful!";
                 }
             })
-            .then(data => {
-                document.getElementById('responseMessage').innerText = "Reservation successful!";
-            })
             .catch(error => {
-                // Display the error message on the reservation page
-                document.getElementById('responseMessage').innerText = error.message || "Error making reservation. Please try again.";
+                document.getElementById('responseMessage').innerText = "Error making reservation. Please try again.";
                 console.error('Error:', error);
             });
         });
