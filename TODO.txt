@@ -1,0 +1,6 @@
+TODO list for PR-------------
+
+1. make a email sender
+2. In the email from links to either cancel or modify current reservation. 
+3. Email should send out follow up for 3 hour notification on reservation. 1 hour notice to cancel. After one hour cannot modify reservation.  
+4.So two html files with cancel and modify. each wil have api response put and delete. have a modify handler and a delete handler. 
