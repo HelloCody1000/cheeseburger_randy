@@ -1,0 +1,15 @@
+@startuml
+
+title SMS Opt-In Workflow for Reservation Notifications
+
+User -> ReservationSystem : Makes Reservation\n(provides phone number and consents)
+ReservationSystem -> ConsentDatabase : Record Consent
+
+ReservationSystem -> User : Sends Confirmation SMS
+User -> User : Receives "Thank you for opting in..." message\n(Reply STOP to unsubscribe)
+
+User -> ReservationSystem : Receives Reservation Updates\n(confirmation, modification, or cancellation)
+User -> ReservationSystem : Reply "STOP" to unsubscribe
+
+ReservationSystem -> ConsentDatabase : Update Preferences (Opt-out)
+@enduml
