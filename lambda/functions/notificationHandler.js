@@ -54,3 +54,4 @@ export const notificationHandler = async (event) => {
         body: JSON.stringify({ message: "Notification processed successfully." })
     };
 };
+//arn:aws:iam::628677376833:role/fullAcccess \
