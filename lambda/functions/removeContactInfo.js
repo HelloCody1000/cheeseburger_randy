@@ -1,17 +1,40 @@
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, DeleteCommand } from "@aws-sdk/lib-dynamodb";
-import { SESClient, SendEmailCommand } from "@aws-sdk/client-ses";
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, DeleteCommand } from '@aws-sdk/lib-dynamodb';
+import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 
 // Initialize DynamoDB and SES clients
-const dynamodb = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-east-1" }));
-const ses = new SESClient({ region: "us-east-1" });
+const client = new DynamoDBClient({ region: 'us-east-1' });
+const dynamodb = DynamoDBDocumentClient.from(client);
+const ses = new SESClient({ region: 'us-east-1' });
 
-export const removeContactInfo = async (email) => {
+export const handler = async (event) => {
+    console.log("Raw event received by removeContactInfo:", JSON.stringify(event, null, 2));
+
+    let email;
+    try {
+        // Parse the event data
+        email = typeof event === "string" ? JSON.parse(event).email : event.email;
+    } catch (parseError) {
+        console.error("Error parsing event data:", parseError);
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Invalid event data format.' })
+        };
+    }
+
+    if (!email) {
+        console.error("Missing 'email' in event data.");
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: "The 'email' field is required." })
+        };
+    }
+
     console.log(`Starting contact removal process for email: ${email}`);
 
     // Define parameters for DynamoDB row deletion
     const deleteParams = {
-        TableName: "userSubStatus",
+        TableName: 'userSubStatus',
         Key: { email }
     };
 
@@ -39,10 +62,10 @@ export const removeContactInfo = async (email) => {
                 }
             },
             Subject: {
-                Data: "Confirmation: Contact Information Removed"
+                Data: "Smash Burger Randy Confirmation: Contact Information Removed"
             }
         },
-        Source: "your-verified-email@example.com" // Replace with your verified SES email address
+        Source: "otakugraphicshelp@gmail.com" // Replace with your verified SES email address
     };
 
     try {
