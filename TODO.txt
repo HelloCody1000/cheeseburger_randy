@@ -1,0 +1,2 @@
+11/23 note
+    edit app/tsx
