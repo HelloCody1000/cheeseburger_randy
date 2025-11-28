@@ -1,14 +1,35 @@
-import { MenuItem } from "./types";
+// src/library/menu.ts
+import type { MenuItem } from "./types";
+
 export const menuItems: MenuItem[] = [
-    {id:'1', name: 'The Randy', description: 'Description of the randy burger',price:10.69,category:'burger'},
-    {id:'2', name: 'Fries', description: 'Description of the side of fries',price:2.69,category:'side'}
+  {
+    id: "1",
+    name: "The Randy",
+    description: "Description of the Randy burger",
+    price: 10.69,
+    category: "burger",
+  },
+  {
+    id: "2",
+    name: "Fries",
+    description: "Description of the side of fries",
+    price: 2.69,
+    category: "side",
+  },
 ];
 
-export function getMenuCategories():string[]{
-    const categories = new Set(MenuItem.map(item => item.category));
-    return Array.from(categories);
+// Get unique categories from menuItems
+export function getMenuCategories(): string[] {
+  const categories = new Set<string>();
+
+  for (const item of menuItems) {
+    categories.add(item.category);
+  }
+
+  return Array.from(categories);
 }
 
-export function getItemsByCategory(categor: string): MenuItem[]{
-    return menuItems.filter(item => item.category === category);
+// Get items for a specific category
+export function getItemsByCategory(category: string): MenuItem[] {
+  return menuItems.filter((item) => item.category === category);
 }
