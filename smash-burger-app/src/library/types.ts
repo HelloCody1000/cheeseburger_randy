@@ -4,6 +4,7 @@ export interface MenuItem {
     description: string;
     price: number;
     category: 'appetizer' | 'burger' | 'side' | 'drink' ;
+    availableQty: number;
 }
 
 export interface OrderItem {
