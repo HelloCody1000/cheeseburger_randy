@@ -1,4 +1,4 @@
-import { OrderItem, UserInfo } from "../library/types";
+import { type OrderItem, type UserInfo } from "../library/types";
 
 //Define what payload looks like
 

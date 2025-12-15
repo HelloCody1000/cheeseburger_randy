@@ -1,4 +1,4 @@
-import { MenuItem } from "./types";
+import { type MenuItem } from "./types";
 import { menuItems } from "./menu";
 /**
  * Returns all menu items that belong to a specific category.

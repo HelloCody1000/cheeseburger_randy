@@ -1,4 +1,4 @@
-import { OrderItem, UserInfo } from "../library/types";
+import type { OrderItem, UserInfo } from "../library/types";
 
 interface OrderPayload {
   user: UserInfo;
@@ -20,3 +20,4 @@ export async function submitOrderToAWS(payload: OrderPayload): Promise<boolean> 
   
   // Return true to simulate success
   return true;
+}

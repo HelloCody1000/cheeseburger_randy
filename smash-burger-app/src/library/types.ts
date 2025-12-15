@@ -19,3 +19,9 @@ export interface PickupTime {
     orderedTime: number;
     pickUpTime: number;
 }
+
+export interface UserInfo {
+    name: string;
+    email: string;
+    phone: string;
+}
