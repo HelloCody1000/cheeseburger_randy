@@ -138,6 +138,8 @@ export default function App() {
                 onRemove={handleRemoveLineItem}
                 onSubmit={handlePlaceOrder}
                 onBack={() => setCurrentView('menu')}
+                onIncrement={handleAddToCart}
+                onDecrement={handleRemoveFromCart}
             />
 
         /* VIEW 3: MENU (Default) */

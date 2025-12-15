@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Trash2 } from "lucide-react";
+import { Trash2, Plus, Minus } from "lucide-react"; // Added Plus/Minus
 
 // Imports from your library
 import { type MenuItem, type OrderItem, type UserInfo } from "../library/types";
@@ -10,19 +10,31 @@ import { PickupSelector } from "./PickupSelector";
 
 interface CartViewProps {
   cart: OrderItem[];
-  menuItems: MenuItem[]; // Note: variable name changed to menuItems to match App.tsx
+  menuItems: MenuItem[];
   totalPrice: number;
   onRemove: (id: string) => void;
   onSubmit: (user: UserInfo, time: string) => void;
   onBack: () => void;
+  // --- NEW PROPS ---
+  onIncrement: (id: string) => void;
+  onDecrement: (id: string) => void;
 }
 
-export function CartView({ cart, menuItems, totalPrice, onRemove, onSubmit, onBack }: CartViewProps) {
+export function CartView({ 
+  cart, 
+  menuItems, 
+  totalPrice, 
+  onRemove, 
+  onSubmit, 
+  onBack,
+  onIncrement, // Destructure new prop
+  onDecrement  // Destructure new prop
+}: CartViewProps) {
   const [userInfo, setUserInfo] = useState<UserInfo>({ name: "", phone: "", email: "" });
   const [pickupTime, setPickupTime] = useState<string>("");
   
-  // Generate times on render
-  const timeSlots = generatePickupTime();
+  // Generate times on initial render
+  const [timeSlots] = useState(() => generatePickupTime());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -53,19 +65,69 @@ export function CartView({ cart, menuItems, totalPrice, onRemove, onSubmit, onBa
         {cart.map((cartItem) => {
           const item = menuItems.find((m) => m.id === cartItem.itemId);
           if (!item) return null;
+          
           const itemTotal = item.price * cartItem.quantity;
+          const remaining = item.availableQty - cartItem.quantity;
 
           return (
             <div key={cartItem.itemId} className="cart-row">
-              <div style={{ display: "flex", flexDirection: "column" }}>
+              {/* Left Side: Name & Info */}
+              <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
                 <span className="cart-item-name">{item.name}</span>
-                <span className="cart-item-math">
-                  ${item.price.toFixed(2)} x {cartItem.quantity}
+                <span className="cart-item-math" style={{ fontSize: "0.85rem", color: "#888" }}>
+                  ${item.price.toFixed(2)} each
                 </span>
               </div>
-              <div className="cart-row-total">
-                <span>${itemTotal.toFixed(2)}</span>
-                <button onClick={() => onRemove(cartItem.itemId)} className="trash-btn">
+
+              {/* Middle: Quantity Controls (NEW) */}
+              <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", margin: "0 1rem" }}>
+                  {/* Decrement Button */}
+                  <button 
+                    onClick={() => onDecrement(cartItem.itemId)}
+                    type="button"
+                    style={{
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: "26px", height: "26px", borderRadius: "50%",
+                        backgroundColor: "#ef4444", border: "none", padding: 0, cursor: "pointer"
+                    }}
+                  >
+                     <Minus size={16} color="#ffffff" strokeWidth={3} />
+                  </button>
+
+                  <span style={{ fontWeight: "bold", width: "1.2rem", textAlign: "center" }}>
+                    {cartItem.quantity}
+                  </span>
+
+                  {/* Increment Button */}
+                  <button 
+                    onClick={() => onIncrement(cartItem.itemId)}
+                    disabled={remaining === 0}
+                    type="button"
+                    style={{ 
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        width: "26px", height: "26px", borderRadius: "50%",
+                        backgroundColor: "transparent", padding: 0,
+                        cursor: remaining === 0 ? "not-allowed" : "pointer",
+                        borderColor: remaining === 0 ? "#444" : "#ffc857", 
+                        borderWidth: "2px", borderStyle: "solid",
+                        opacity: remaining === 0 ? 0.5 : 1 
+                    }}
+                  >
+                     <Plus size={16} color={remaining === 0 ? "#888888" : "#ffc857"} strokeWidth={3} />
+                  </button>
+              </div>
+
+              {/* Right Side: Total Price & Trash */}
+              <div className="cart-row-total" style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <span style={{ fontWeight: "bold", minWidth: "60px", textAlign: "right" }}>
+                    ${itemTotal.toFixed(2)}
+                </span>
+                
+                <button 
+                    onClick={() => onRemove(cartItem.itemId)} 
+                    className="trash-btn"
+                    title="Remove item completely"
+                >
                   <Trash2 size={18} />
                 </button>
               </div>
