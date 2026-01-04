@@ -1,12 +1,24 @@
-// This file just handles the ugly JSON transformation
 export const mapUserSelectionToToastPayload = (userItems: any[]) => {
-  // Logic to turn ["Burger", "No Onions"] into Toast GUIDs
-  // e.g. "Burger" -> "8f9s-df90-sfd9-0000"
+  // 1. Placeholder GUID (We will replace this with real data later)
+  const BURGER_GUID = "888-TOAST-BURGER-ID"; 
   
+  // 2. Map the incoming items to the Toast structure
+  const selections = userItems.map(item => {
+    return {
+      itemGroup: { guid: BURGER_GUID },
+      quantity: 1,
+      modifiers: [] // We'll add modifier logic later
+    };
+  });
+
+  // 3. Return the full Toast Order Object
+  // CRITICAL: Notice we create an object inside the 'checks' array
   return {
     restaurantGuid: process.env.RESTAURANT_GUID,
     checks: [
-      // ... complex mapping logic ...
+      {
+        selections: selections
+      }
     ]
   };
 };

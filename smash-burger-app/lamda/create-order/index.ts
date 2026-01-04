@@ -1,6 +1,6 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { getToastToken, submitToastOrder } from './toast-service';
-import { mapUserSelectionToToastPayload } from './menu-mapper';
+import { mapUserSelectionToToastPayload } from './menuMapper';
 import { saveOrderToDb } from './database';
 
 export const handler: APIGatewayProxyHandler = async (event) => {
