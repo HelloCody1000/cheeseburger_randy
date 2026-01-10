@@ -1,0 +1,539 @@
+{
+ "Resources": {
+  "OrdersTable315BB997": {
+   "Type": "AWS::DynamoDB::Table",
+   "Properties": {
+    "AttributeDefinitions": [
+     {
+      "AttributeName": "toastGuid",
+      "AttributeType": "S"
+     }
+    ],
+    "BillingMode": "PAY_PER_REQUEST",
+    "KeySchema": [
+     {
+      "AttributeName": "toastGuid",
+      "KeyType": "HASH"
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Delete",
+   "DeletionPolicy": "Delete",
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/OrdersTable/Resource"
+   }
+  },
+  "CreateOrderFunctionServiceRole1DACE62C": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/CreateOrderFunction/ServiceRole/Resource"
+   }
+  },
+  "CreateOrderFunctionServiceRoleDefaultPolicy26A206EE": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": [
+        "dynamodb:BatchWriteItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:DescribeTable"
+       ],
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::GetAtt": [
+         "OrdersTable315BB997",
+         "Arn"
+        ]
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "CreateOrderFunctionServiceRoleDefaultPolicy26A206EE",
+    "Roles": [
+     {
+      "Ref": "CreateOrderFunctionServiceRole1DACE62C"
+     }
+    ]
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/CreateOrderFunction/ServiceRole/DefaultPolicy/Resource"
+   }
+  },
+  "CreateOrderFunction7F1C188E": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": "cdk-hnb659fds-assets-628677376833-us-east-1",
+     "S3Key": "5b95413837bbc029fa26bd08d83d76115a41705af69507a4cb3127f45a03b1e1.zip"
+    },
+    "Environment": {
+     "Variables": {
+      "TABLE_NAME": {
+       "Ref": "OrdersTable315BB997"
+      },
+      "TOAST_CLIENT_ID": "PLACEHOLDER_ID",
+      "TOAST_CLIENT_SECRET": "PLACEHOLDER_SECRET",
+      "RESTAURANT_GUID": "PLACEHOLDER_GUID"
+     }
+    },
+    "Handler": "index.handler",
+    "Role": {
+     "Fn::GetAtt": [
+      "CreateOrderFunctionServiceRole1DACE62C",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs20.x"
+   },
+   "DependsOn": [
+    "CreateOrderFunctionServiceRoleDefaultPolicy26A206EE",
+    "CreateOrderFunctionServiceRole1DACE62C"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/CreateOrderFunction/Resource",
+    "aws:asset:path": "C:\\Users\\codyf\\Documents\\GitRepo\\cheeseburger_randy\\smash-burger-app",
+    "aws:asset:is-bundled": true,
+    "aws:asset:property": "Code"
+   }
+  },
+  "RandyBurgerApi8594DCD2": {
+   "Type": "AWS::ApiGateway::RestApi",
+   "Properties": {
+    "Description": "Handles orders for the Randy Burger project",
+    "Name": "Randy Burger Service"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Resource"
+   }
+  },
+  "RandyBurgerApiCloudWatchRole8F5095F6": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "apigateway.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+       ]
+      ]
+     }
+    ]
+   },
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/CloudWatchRole/Resource"
+   }
+  },
+  "RandyBurgerApiAccount7D88C243": {
+   "Type": "AWS::ApiGateway::Account",
+   "Properties": {
+    "CloudWatchRoleArn": {
+     "Fn::GetAtt": [
+      "RandyBurgerApiCloudWatchRole8F5095F6",
+      "Arn"
+     ]
+    }
+   },
+   "DependsOn": [
+    "RandyBurgerApi8594DCD2"
+   ],
+   "UpdateReplacePolicy": "Retain",
+   "DeletionPolicy": "Retain",
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Account"
+   }
+  },
+  "RandyBurgerApiDeployment96E50D9Bb104e37e880896aa0861752eddc9c93f": {
+   "Type": "AWS::ApiGateway::Deployment",
+   "Properties": {
+    "Description": "Handles orders for the Randy Burger project",
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    }
+   },
+   "DependsOn": [
+    "RandyBurgerApiOPTIONSC39D4A5F",
+    "RandyBurgerApiordersOPTIONS51B930CD",
+    "RandyBurgerApiordersPOST86911BBE",
+    "RandyBurgerApiordersFAE72D23"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Deployment/Resource",
+    "aws:cdk:do-not-refactor": true
+   }
+  },
+  "RandyBurgerApiDeploymentStageprod6B4052BF": {
+   "Type": "AWS::ApiGateway::Stage",
+   "Properties": {
+    "DeploymentId": {
+     "Ref": "RandyBurgerApiDeployment96E50D9Bb104e37e880896aa0861752eddc9c93f"
+    },
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    },
+    "StageName": "prod"
+   },
+   "DependsOn": [
+    "RandyBurgerApiAccount7D88C243"
+   ],
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/DeploymentStage.prod/Resource"
+   }
+  },
+  "RandyBurgerApiOPTIONSC39D4A5F": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Fn::GetAtt": [
+      "RandyBurgerApi8594DCD2",
+      "RootResourceId"
+     ]
+    },
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/OPTIONS/Resource"
+   }
+  },
+  "RandyBurgerApiordersFAE72D23": {
+   "Type": "AWS::ApiGateway::Resource",
+   "Properties": {
+    "ParentId": {
+     "Fn::GetAtt": [
+      "RandyBurgerApi8594DCD2",
+      "RootResourceId"
+     ]
+    },
+    "PathPart": "orders",
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/orders/Resource"
+   }
+  },
+  "RandyBurgerApiordersOPTIONS51B930CD": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "ApiKeyRequired": false,
+    "AuthorizationType": "NONE",
+    "HttpMethod": "OPTIONS",
+    "Integration": {
+     "IntegrationResponses": [
+      {
+       "ResponseParameters": {
+        "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+        "method.response.header.Access-Control-Allow-Origin": "'*'",
+        "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET,PUT,POST,DELETE,PATCH,HEAD'"
+       },
+       "StatusCode": "204"
+      }
+     ],
+     "RequestTemplates": {
+      "application/json": "{ statusCode: 200 }"
+     },
+     "Type": "MOCK"
+    },
+    "MethodResponses": [
+     {
+      "ResponseParameters": {
+       "method.response.header.Access-Control-Allow-Headers": true,
+       "method.response.header.Access-Control-Allow-Origin": true,
+       "method.response.header.Access-Control-Allow-Methods": true
+      },
+      "StatusCode": "204"
+     }
+    ],
+    "ResourceId": {
+     "Ref": "RandyBurgerApiordersFAE72D23"
+    },
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/orders/OPTIONS/Resource"
+   }
+  },
+  "RandyBurgerApiordersPOSTApiPermissionRandyBurgerStackRandyBurgerApi8583B22CPOSTorders31A51C88": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreateOrderFunction7F1C188E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:628677376833:",
+       {
+        "Ref": "RandyBurgerApi8594DCD2"
+       },
+       "/",
+       {
+        "Ref": "RandyBurgerApiDeploymentStageprod6B4052BF"
+       },
+       "/POST/orders"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/orders/POST/ApiPermission.RandyBurgerStackRandyBurgerApi8583B22C.POST..orders"
+   }
+  },
+  "RandyBurgerApiordersPOSTApiPermissionTestRandyBurgerStackRandyBurgerApi8583B22CPOSTorders83905E3E": {
+   "Type": "AWS::Lambda::Permission",
+   "Properties": {
+    "Action": "lambda:InvokeFunction",
+    "FunctionName": {
+     "Fn::GetAtt": [
+      "CreateOrderFunction7F1C188E",
+      "Arn"
+     ]
+    },
+    "Principal": "apigateway.amazonaws.com",
+    "SourceArn": {
+     "Fn::Join": [
+      "",
+      [
+       "arn:",
+       {
+        "Ref": "AWS::Partition"
+       },
+       ":execute-api:us-east-1:628677376833:",
+       {
+        "Ref": "RandyBurgerApi8594DCD2"
+       },
+       "/test-invoke-stage/POST/orders"
+      ]
+     ]
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/orders/POST/ApiPermission.Test.RandyBurgerStackRandyBurgerApi8583B22C.POST..orders"
+   }
+  },
+  "RandyBurgerApiordersPOST86911BBE": {
+   "Type": "AWS::ApiGateway::Method",
+   "Properties": {
+    "AuthorizationType": "NONE",
+    "HttpMethod": "POST",
+    "Integration": {
+     "IntegrationHttpMethod": "POST",
+     "Type": "AWS_PROXY",
+     "Uri": {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":apigateway:us-east-1:lambda:path/2015-03-31/functions/",
+        {
+         "Fn::GetAtt": [
+          "CreateOrderFunction7F1C188E",
+          "Arn"
+         ]
+        },
+        "/invocations"
+       ]
+      ]
+     }
+    },
+    "ResourceId": {
+     "Ref": "RandyBurgerApiordersFAE72D23"
+    },
+    "RestApiId": {
+     "Ref": "RandyBurgerApi8594DCD2"
+    }
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/RandyBurgerApi/Default/orders/POST/Resource"
+   }
+  },
+  "CDKMetadata": {
+   "Type": "AWS::CDK::Metadata",
+   "Properties": {
+    "Analytics": "v2:deflate64:H4sIAAAAAAAA/01QS1ODMBD+Ld7T2JaLV6rjrepU78ySrBggCcMmdhiG/+4moPX0PTbfPnKUx6KQ+zu40k7pbtebWs7vAVQn2KpmPTmwXrP5AXWP4vHTZbKIHmytoXJeY0vyJcNzdCoY74QBK+eLXwMZ33xv1JTkyhZBRQVEGEiWCVjLU1QdhhMQbu3lzIG/rimMozVErBYBg2kg4BUmnoUUysHkcTdaKuWjC+IJh95PFpmy+0/xpU3ecSUc9XFUmDc4Y/jyOhU39lvdhmS+LDc7n5EaGdekN68xDDEsIn2RbOn++/AgD3v+7JaM2Y28mLEoLyv+AG2OA1WJAQAA"
+   },
+   "Metadata": {
+    "aws:cdk:path": "RandyBurgerStack/CDKMetadata/Default"
+   }
+  }
+ },
+ "Outputs": {
+  "RandyBurgerApiEndpoint4ECC6D8C": {
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "RandyBurgerApi8594DCD2"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "RandyBurgerApiDeploymentStageprod6B4052BF"
+      },
+      "/"
+     ]
+    ]
+   }
+  },
+  "ApiUrl": {
+   "Description": "The URL to use in your React App",
+   "Value": {
+    "Fn::Join": [
+     "",
+     [
+      "https://",
+      {
+       "Ref": "RandyBurgerApi8594DCD2"
+      },
+      ".execute-api.us-east-1.",
+      {
+       "Ref": "AWS::URLSuffix"
+      },
+      "/",
+      {
+       "Ref": "RandyBurgerApiDeploymentStageprod6B4052BF"
+      },
+      "/"
+     ]
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "BootstrapVersion": {
+   "Type": "AWS::SSM::Parameter::Value<String>",
+   "Default": "/cdk-bootstrap/hnb659fds/version",
+   "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]"
+  }
+ },
+ "Rules": {
+  "CheckBootstrapVersion": {
+   "Assertions": [
+    {
+     "Assert": {
+      "Fn::Not": [
+       {
+        "Fn::Contains": [
+         [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+         ],
+         {
+          "Ref": "BootstrapVersion"
+         }
+        ]
+       }
+      ]
+     },
+     "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI."
+    }
+   ]
+  }
+ }
+}

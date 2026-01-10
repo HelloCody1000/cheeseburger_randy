@@ -1,0 +1,36 @@
+{
+  "version": "48.0.0",
+  "files": {
+    "5b95413837bbc029fa26bd08d83d76115a41705af69507a4cb3127f45a03b1e1": {
+      "displayName": "CreateOrderFunction/Code",
+      "source": {
+        "path": "C:\\Users\\codyf\\Documents\\GitRepo\\cheeseburger_randy\\smash-burger-app",
+        "packaging": "zip"
+      },
+      "destinations": {
+        "628677376833-us-east-1-2600b93c": {
+          "bucketName": "cdk-hnb659fds-assets-628677376833-us-east-1",
+          "objectKey": "5b95413837bbc029fa26bd08d83d76115a41705af69507a4cb3127f45a03b1e1.zip",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::628677376833:role/cdk-hnb659fds-file-publishing-role-628677376833-us-east-1"
+        }
+      }
+    },
+    "79f16bb515dc88d96a4e73265264fb7efd5c29e85a8afd0eb3cffe9a978c2457": {
+      "displayName": "RandyBurgerStack Template",
+      "source": {
+        "path": "RandyBurgerStack.template.json",
+        "packaging": "file"
+      },
+      "destinations": {
+        "628677376833-us-east-1-edb61956": {
+          "bucketName": "cdk-hnb659fds-assets-628677376833-us-east-1",
+          "objectKey": "79f16bb515dc88d96a4e73265264fb7efd5c29e85a8afd0eb3cffe9a978c2457.json",
+          "region": "us-east-1",
+          "assumeRoleArn": "arn:${AWS::Partition}:iam::628677376833:role/cdk-hnb659fds-file-publishing-role-628677376833-us-east-1"
+        }
+      }
+    }
+  },
+  "dockerImages": {}
+}

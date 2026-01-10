@@ -1,5 +1,5 @@
 // lambda/create-order/test/menuMapper.test.ts
-import { mapUserSelectionToToastPayload } from '../menuMapper';
+import { mapUserSelectionToToastPayload } from '../menuMapper.js';
 
 describe('Menu Mapper Logic', () => {
   // Setup generic environment variables before running tests

@@ -1,0 +1,7 @@
+{
+    "internalId": "TEST-ORDER-001",
+    "items": [
+      { "name": "Double Smash", "quantity": 1 },
+      { "name": "Fries", "quantity": 1 }
+    ]
+}
